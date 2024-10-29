@@ -1,4 +1,4 @@
-# Source Lines of Code Counter
+# λsloc
 
 This program intends to count the lines of code of multiple programming languages, such as C/C++, Java, Kotlin, Rust, JavaScript, Haskell, Python. `sloc` receive as input one or more files or directories, having the option to act recursively in sub-directories.
 
@@ -20,7 +20,7 @@ You can see program information with the `-h` or `--help` flag. The available op
 
 ```terminal
 $ ./sloc -h
-Welcome to sloc, version 1.0, (c) Vinicius, DIMAp, UFRN.
+Welcome to λsloc, version 1.0.
 Usage: sloc [options] file/directory
 Options:
   -h/--help       Display this information.
