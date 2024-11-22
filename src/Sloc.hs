@@ -4,31 +4,53 @@ import Data.Char (isSpace)
 
 data Token
   = Comment
-  | CodeLine String
+  | CodeLine
   | Empty
   deriving (Show, Eq)
 
 data ParserState
   = InMultiLineComment
-  | InSingleLineComment
   | InStringLiteral
   | Normal
   deriving (Show, Eq)
 
 tokenize :: String -> [Token]
-tokenize = undefined
+tokenize fileContent = tokenize' (lines fileContent) Normal
 
-tokenize' :: [String] -> String -> ParserState -> [Token]
-tokenize' [] _ _ = [Empty]
-tokenize' (l : lss) acc state = processline l ++ tokenize' lss acc state
+tokenize' :: [String] -> ParserState -> [Token]
+tokenize' [] _ = []
+tokenize' (l : lss) state = processline l [] state ++ tokenize' lss state
 
 processline :: String -> String -> ParserState -> [Token]
+processline [] acc Normal = if null acc then [Empty] else [CodeLine]
+processline [] _ InStringLiteral = [CodeLine]
 processline [] _ InMultiLineComment = [Comment]
-processline [] _ InStringLiteral = [CodeLine []]
-processline [] _ Normal = [Empty]
-processline [] _ InSingleLineComment = error "Unexpected Behaviour, parsing empty line while reading InLineComment"
-processline (c : cs) acc InMultiLineComment =
-  if (not . null) cs
-    then if c == '*' && head cs == '/' then Comment : processline (tail cs) acc Normal else processline (tail cs) acc InMultiLineComment
-    else [Comment]
-processline line acc InSingleLineComment = [Comment]
+processline (c : cs) acc InMultiLineComment
+  | not (null cs) && c == '*' && head cs == '/' = Comment : processline (tail cs) acc Normal
+  | otherwise = processline cs acc InMultiLineComment
+processline (c : cs) acc InStringLiteral
+  | isStringLiteralEnd c acc || isNotEscapedSingleQuote acc = processline cs (c : acc) Normal
+  | otherwise = processline cs (c : acc) InStringLiteral
+processline (c : cs) acc Normal
+  | all isSpace (c : cs) = [Empty]
+  | isStringLiteralStart c acc = processline cs (c : acc) InStringLiteral
+  | not (null cs) && c == '/' && head cs == '/' = [CodeLine, Comment]
+  | not (null cs) && c == '/' && head cs == '*' = CodeLine : processline (tail cs) [] InMultiLineComment
+  | otherwise = processline cs (c : acc) Normal
+
+isStringLiteralStart :: Char -> String -> Bool
+isStringLiteralStart c acc = c == '"' && (null acc || last acc /= '\\')
+
+isNotEscapedSingleQuote :: String -> Bool
+isNotEscapedSingleQuote acc = (not . null) acc && head acc /= '\''
+
+countBackSlashes :: String -> Int
+countBackSlashes = length . takeWhile (== '\\')
+
+isStringLiteralEnd :: Char -> String -> Bool
+isStringLiteralEnd ch predChars = ch == '"' && even (countBackSlashes predChars)
+
+testTokenize :: IO ()
+testTokenize = do
+  fileContents <- readFile "test-files/test.cpp"
+  print (tokenize fileContents)
