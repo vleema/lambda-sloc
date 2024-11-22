@@ -60,6 +60,8 @@ executable sloc
     base ^>=4.17.2.1,
     directory,
     filepath,
+    regex-tdfa,
+    regex-base,
     unix,
 
   -- Directories containing source files.

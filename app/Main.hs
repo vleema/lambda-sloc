@@ -43,5 +43,3 @@ getSourceCodeFiles recursively filePath = do
       filterM (return . isSourceCodeFile) commonFiles
     else if isSourceCodeFile filePath then return [filePath] else return []
 
--- Count the lines of
--- Display his list based on the sort configuration.

@@ -20,7 +20,7 @@ You can see program information with the `-h` or `--help` flag. The available op
 
 ```terminal
 $ ./sloc -h
-Welcome to λsloc, version 1.0.
+Welcome to λsloc, version 0
 Usage: sloc [options] file/directory
 Options:
   -h/--help       Display this information.
@@ -38,6 +38,8 @@ The program is written in Haskell, and was packaged by `cabal`. So you can run i
 ```terminal
 cabal run sloc -- <args>
 cabal install sloc
+```
+
 ```
 
 ```
