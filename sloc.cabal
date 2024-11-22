@@ -50,8 +50,10 @@ executable sloc
   main-is: Main.hs
   -- Modules included in this executable, other than Main.
   other-modules:
+    Files
     Sloc
     SlocCLIParser
+    Table
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
@@ -60,8 +62,8 @@ executable sloc
     base ^>=4.17.2.1,
     directory,
     filepath,
-    regex-tdfa,
     regex-base,
+    regex-tdfa,
     unix,
 
   -- Directories containing source files.
