@@ -2,7 +2,7 @@ module SlocCLIParser where
 
 helpMessage :: String
 helpMessage =
-  "Welcome to λsloc, there's nothing implemented yet, but will.\n\
+  "Welcome to λsloc, Ver 0.1.0.0, your favorite line counter.\n\
   \\n\
   \USAGE:\n\
   \    ./sloc [OPTIONS]... file/directory...\n\
