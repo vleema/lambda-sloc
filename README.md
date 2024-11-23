@@ -5,7 +5,7 @@ This program intends to count the lines of code of multiple programming language
 A sample output would be:
 
 ```terminal
-$ ./sloc src/main.cpp
+$ sloc src/main.cpp
 Files processed: 1
 -----------------------------------------------------------------------------------------
 Filename            Language        Comments        Blank           Code            All
@@ -19,16 +19,20 @@ src/main.cpp        C++             140 (29.9%)     43 (9.2%)       320 (68.4%) 
 You can see program information with the `-h` or `--help` flag. The available options are:
 
 ```terminal
-$ ./sloc -h
-Welcome to λsloc, version 0
-Usage: sloc [options] file/directory
-Options:
-  -h/--help       Display this information.
-  -r              Look for files recursively in the directory provided.
-  -s f/t/c/b/s/a  Sort table in ascending order by (f)ilename, (t) filetype,
-                  (c)omments, (b)lank lines, (s)loc, or (a)ll. Default is to show
-                  files in ordem of appearance.
-  -S f/t/c/b/s/a  Same as above, but in descending order.
+$ sloc -h
+Welcome to λsloc, Ver 0.1.0.0, your favorite line counter.
+
+USAGE:
+    ./sloc [OPTIONS]... file/directory...
+
+OPTIONS:
+     -h/--help       Display this information.
+    -r              Look for files recursively in the directory provided.
+    -s f/t/c/b/s/a  Sort table in ascending order by (f)ilename, (t) filetype,
+                    (c)omments, (b)lank lines, (s)loc, or (a)ll. Default is to show
+                    files in ordem of appearance.
+    -S f/t/c/b/s/a  Same as above, but in descending order.
+
 ```
 
 #### Run and or Installing
