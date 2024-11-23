@@ -9,6 +9,13 @@ data FileType
   | Regular
   deriving (Show, Eq)
 
+instance Ord FileType where
+  Header _ <= Rust _ = True
+  C _ <= Header _ = True
+  CPP _ <= C _ = True
+  _ <= CPP _ = True
+  _ <= _ = False
+
 printFilePath :: FileType -> String
 printFilePath = reverse . (++ ".../.") . reverse . getFilePath
 

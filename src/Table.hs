@@ -5,18 +5,16 @@ import Data.Ord (comparing)
 
 import File (File (..))
 import FileType (getFilePath)
+import SlocCLIParser (SortField (..), SortOrder)
 
-sortByLoc :: [File] -> [File]
-sortByLoc = sortBy (comparing loc)
+printTable :: (SortField, SortOrder) -> [File] -> IO ()
+printTable _ _ = putStrLn "Hi mom"
 
-sortByComments :: [File] -> [File]
-sortByComments = sortBy (comparing comments)
-
-sortByFileName :: [File] -> [File]
-sortByFileName = sortBy (comparing (getFilePath . file))
-
-sortByTotalLines :: [File] -> [File]
-sortByTotalLines = sortBy (comparing total)
-
-sortByBlankLines :: [File] -> [File]
-sortByBlankLines = sortBy (comparing blank)
+sortFiles :: SortField -> [File] -> [File]
+sortFiles Default = id
+sortFiles Sloc = sortBy (comparing loc)
+sortFiles Comments = sortBy (comparing comments)
+sortFiles Filename = sortBy (comparing (getFilePath . file))
+sortFiles All = sortBy (comparing total)
+sortFiles Blanks = sortBy (comparing blank)
+sortFiles Filetype = sortBy (comparing file)
