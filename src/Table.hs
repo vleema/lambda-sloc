@@ -6,7 +6,7 @@ import Text.Printf (printf)
 
 import File (File (..))
 import FileType (getFilePath, printFileType)
-import SlocCLIParser (SortField (..), SortOrder (Ascending, Descending))
+import SlocCLIParser (SortField (..), SortOrder (Ascending))
 
 printTable :: (SortField, SortOrder) -> [File] -> IO ()
 printTable _ [] = putStrLn "Nothing to be printed ¯\\_(ツ)_/¯"
@@ -82,8 +82,10 @@ formatSumRow colWidths totalLoc totalComments totalBlank totalTotal =
       aligns = [True, True, False, False, False, False]
    in formatRow colWidths cols aligns
 
+-- Main printTable function
+
 sortFiles :: (SortField, SortOrder) -> [File] -> [File]
-sortFiles (sField, Descending) = sortFilesByField sField
+sortFiles (sField, Ascending) = sortFilesByField sField
 sortFiles (sField, _) = reverse . sortFilesByField sField
 
 sortFilesByField :: SortField -> [File] -> [File]
