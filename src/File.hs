@@ -1,20 +1,12 @@
-module Files where
+module File where
 
 import Control.Monad (filterM, forM)
 import GHC.OldList (isSuffixOf)
 import System.Directory (doesDirectoryExist, doesFileExist, listDirectory)
 import System.FilePath ((</>))
 
+import FileType (FileType (..), getFilePath)
 import Sloc (Token (BlankLine, CodeLine, CommentLine), countToken, tokenize)
-
-data FileType
-  = Java FilePath
-  | C FilePath
-  | CPP FilePath
-  | Rust FilePath
-  | Header FileType
-  | None
-  deriving (Show, Eq)
 
 data File = File
   { loc :: Int
@@ -33,14 +25,6 @@ processFile filetype = do
   fileContents <- readFile $ getFilePath filetype
   let tokens = tokenize fileContents
   return File{loc = countToken CodeLine tokens, total = length $ lines fileContents, blank = countToken BlankLine tokens, comments = countToken CommentLine tokens, file = filetype}
-
-getFilePath :: FileType -> FilePath
-getFilePath (Java path) = path
-getFilePath (C path) = path
-getFilePath (CPP path) = path
-getFilePath (Rust path) = path
-getFilePath (Header fileType) = getFilePath fileType
-getFilePath None = ""
 
 sourceCodeFile :: FilePath -> FileType
 sourceCodeFile file_

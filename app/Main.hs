@@ -1,7 +1,7 @@
 module Main where
 
 import Control.Monad (forM, when)
-import Files
+import File
 import SlocCLIParser (files, help, helpMessage, parseCommandLineArgs, recursive)
 import System.Environment (getArgs)
 import System.Exit (exitFailure, exitSuccess)
