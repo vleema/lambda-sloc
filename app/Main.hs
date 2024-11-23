@@ -18,4 +18,5 @@ main = do
     putStrLn helpMessage
     exitSuccess
   sourceCodeFiles <- forM (files runningOptions) $ getSourceCodeFiles (recursive runningOptions)
-  mapM_ print $ concat sourceCodeFiles
+  processedFiles <- forM (concat sourceCodeFiles) processFile
+  print processedFiles

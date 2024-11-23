@@ -5,7 +5,7 @@ import GHC.OldList (isSuffixOf)
 import System.Directory (doesDirectoryExist, doesFileExist, listDirectory)
 import System.FilePath ((</>))
 
-import Sloc (Token (BlankLine, CodeLine), countToken, tokenize)
+import Sloc (Token (BlankLine, CodeLine, CommentLine), countToken, tokenize)
 
 data FileType
   = Java FilePath
@@ -20,17 +20,27 @@ data File = File
   { loc :: Int
   , total :: Int
   , blank :: Int
+  , comments :: Int
   , file :: FileType
   }
+  deriving (Show)
 
-processFiles :: [FilePath] -> [IO File]
-processFiles = map processFile
+processFiles :: [FileType] -> [IO File]
+processFiles = map processFile . filter (/= None)
 
-processFile :: FilePath -> IO File
-processFile fs = do
-  fileContents <- readFile fs
+processFile :: FileType -> IO File
+processFile filetype = do
+  fileContents <- readFile $ getFilePath filetype
   let tokens = tokenize fileContents
-  return File{loc = countToken CodeLine tokens, total = length fileContents, blank = countToken BlankLine tokens, file = sourceCodeFile fs}
+  return File{loc = countToken CodeLine tokens, total = length $ lines fileContents, blank = countToken BlankLine tokens, comments = countToken CommentLine tokens, file = filetype}
+
+getFilePath :: FileType -> FilePath
+getFilePath (Java path) = path
+getFilePath (C path) = path
+getFilePath (CPP path) = path
+getFilePath (Rust path) = path
+getFilePath (Header fileType) = getFilePath fileType
+getFilePath None = ""
 
 sourceCodeFile :: FilePath -> FileType
 sourceCodeFile file_
@@ -61,8 +71,3 @@ getSourceCodeFiles recursively filePath = do
     else case sourceCodeFile filePath of
       None -> return []
       _ -> return [sourceCodeFile filePath]
-
-testGetSourceCodeFiles :: FilePath -> IO ()
-testGetSourceCodeFiles fs = do
-  files <- getSourceCodeFiles True fs
-  print files
