@@ -56,6 +56,7 @@ formatRow colWidths cols aligns = concat $ interleave paddedCols spaces
   interleave (x : xs) (y : ys) = x : y : interleave xs ys
   interleave [x] [] = [x]
   interleave [] _ = []
+  interleave _ _ = error "Mismatched lists"
 
 formatFileRow :: [Int] -> File -> String
 formatFileRow colWidths f =
