@@ -6,7 +6,7 @@ data FileType
   | CPP FilePath
   | Rust FilePath
   | Header FileType
-  | None
+  | Regular
   deriving (Show, Eq)
 
 printFilePath :: FileType -> String
@@ -18,7 +18,7 @@ printFileType (C _) = "C"
 printFileType (CPP _) = "C++"
 printFileType (Rust _) = "Rust"
 printFileType (Header fileType) = printFilePath fileType ++ " Header"
-printFileType None = ""
+printFileType Regular = ""
 
 getFilePath :: FileType -> FilePath
 getFilePath (Java path) = path
@@ -26,4 +26,4 @@ getFilePath (C path) = path
 getFilePath (CPP path) = path
 getFilePath (Rust path) = path
 getFilePath (Header fileType) = getFilePath fileType
-getFilePath None = ""
+getFilePath Regular = ""

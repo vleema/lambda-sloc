@@ -18,7 +18,7 @@ data File = File
   deriving (Show)
 
 processFiles :: [FileType] -> [IO File]
-processFiles = map processFile . filter (/= None)
+processFiles = map processFile . filter (/= Regular)
 
 processFile :: FileType -> IO File
 processFile filetype = do
@@ -34,7 +34,7 @@ sourceCodeFile file_
   | ".h" `isSuffixOf` file_ = Header (C file_)
   | ".hpp" `isSuffixOf` file_ = Header (CPP file_)
   | ".rs" `isSuffixOf` file_ = Rust file_
-  | otherwise = None
+  | otherwise = Regular
 
 listFilesRecursiverly :: FilePath -> IO [FilePath]
 listFilesRecursiverly filePath = do
@@ -51,7 +51,7 @@ getSourceCodeFiles recursively filePath = do
   if isDir
     then do
       commonFiles <- if recursively then listFilesRecursiverly filePath else listDirectory filePath
-      return $ [sourceCodeFile file_ | file_ <- commonFiles, sourceCodeFile file_ /= None]
+      return $ [sourceCodeFile file_ | file_ <- commonFiles, sourceCodeFile file_ /= Regular]
     else case sourceCodeFile filePath of
-      None -> return []
+      Regular -> return []
       _ -> return [sourceCodeFile filePath]

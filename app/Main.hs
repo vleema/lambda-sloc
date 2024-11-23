@@ -1,19 +1,20 @@
 module Main where
 
 import Control.Monad (forM, when)
-import File
-import SlocCLIParser (files, help, helpMessage, parseCommandLineArgs, recursive)
+import File (getSourceCodeFiles, processFile)
+import SlocCLIParser (Options, files, help, helpMessage, parseCommandLineArgs, recursive, runWithHelp)
 import System.Environment (getArgs)
-import System.Exit (exitFailure, exitSuccess)
+import System.Exit (exitSuccess)
 
 main :: IO ()
 main = do
   cliArgs <- getArgs
-  let runningOptions = parseCommandLineArgs cliArgs
-  when (null (files runningOptions) && not (help runningOptions)) $ do
-    putStrLn "Required argument: \'file/directory\' not set"
-    putStrLn "Run with --help flag for more information"
-    exitFailure
+  case parseCommandLineArgs cliArgs of
+    Left runningOptions -> sloc runningOptions
+    Right errorMsg -> putStrLn $ "Error: " ++ errorMsg ++ "\n" ++ runWithHelp
+
+sloc :: Options -> IO ()
+sloc runningOptions = do
   when (help runningOptions) $ do
     putStrLn helpMessage
     exitSuccess
