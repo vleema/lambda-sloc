@@ -36,6 +36,22 @@ sourceCodeFile file_
   | ".rs" `isSuffixOf` file_ = Rust file_
   | otherwise = Regular
 
+getSourceCodeFiles :: Bool -> FilePath -> IO [FileType]
+getSourceCodeFiles recursively filePath = do
+  isDir <- doesDirectoryExist filePath
+  if isDir
+    then do
+      commonFiles <-
+        if recursively
+          then listFilesRecursiverly filePath
+          else do
+            files <- listDirectory filePath
+            return $ map (filePath </>) files
+      return $ [sourceCodeFile file | file <- commonFiles, sourceCodeFile file /= Regular]
+    else case sourceCodeFile filePath of
+      Regular -> return []
+      _ -> return [sourceCodeFile filePath]
+
 listFilesRecursiverly :: FilePath -> IO [FilePath]
 listFilesRecursiverly filePath = do
   dirContents <- listDirectory filePath
@@ -44,14 +60,3 @@ listFilesRecursiverly filePath = do
   directories <- filterM doesDirectoryExist fullPaths
   nestedFiles <- forM directories listFilesRecursiverly
   return $ commonFiles ++ concat nestedFiles
-
-getSourceCodeFiles :: Bool -> FilePath -> IO [FileType]
-getSourceCodeFiles recursively filePath = do
-  isDir <- doesDirectoryExist filePath
-  if isDir
-    then do
-      commonFiles <- if recursively then listFilesRecursiverly filePath else listDirectory filePath
-      return $ [sourceCodeFile file_ | file_ <- commonFiles, sourceCodeFile file_ /= Regular]
-    else case sourceCodeFile filePath of
-      Regular -> return []
-      _ -> return [sourceCodeFile filePath]
