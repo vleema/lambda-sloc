@@ -2,9 +2,10 @@ module Main where
 
 import Control.Monad (forM, when)
 import File (getSourceCodeFiles, processFile)
-import SlocCLIParser (Options, files, help, helpMessage, parseCommandLineArgs, recursive, runWithHelp)
+import SlocCLIParser (Options, files, help, helpMessage, parseCommandLineArgs, recursive, runWithHelp, sortOpt)
 import System.Environment (getArgs)
 import System.Exit (exitSuccess)
+import Table (printTable)
 
 main :: IO ()
 main = do
@@ -20,4 +21,4 @@ sloc runningOptions = do
     exitSuccess
   sourceCodeFiles <- forM (files runningOptions) $ getSourceCodeFiles (recursive runningOptions)
   processedFiles <- forM (concat sourceCodeFiles) processFile
-  print processedFiles
+  printTable (sortOpt runningOptions) processedFiles

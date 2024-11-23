@@ -22,7 +22,7 @@ data Options = Options
   { recursive :: Bool
   , files :: [String]
   , help :: Bool
-  , sort :: (SortField, SortOrder)
+  , sortOpt :: (SortField, SortOrder)
   }
   deriving (Show)
 
@@ -42,7 +42,7 @@ parseCommandLineArgs args = processArgs args defaultOptions
       { recursive = False
       , files = []
       , help = False
-      , sort = (Default, None)
+      , sortOpt = (Default, None)
       }
 
   processArgs :: [String] -> Options -> Either Options ErrorMessage
@@ -60,17 +60,17 @@ parseCommandLineArgs args = processArgs args defaultOptions
     | otherwise = processArgs rest opts{recursive = True}
   -- Sorting options
   processArgs ("-s" : sField : rest) opts
-    | snd (sort opts) /= None = Right "Sort option specified multiple times"
+    | snd (sortOpt opts) /= None = Right "Sort option specified multiple times"
     | otherwise =
         case parseSortField sField of
-          Just field -> processArgs rest opts{sort = (field, Ascending)}
+          Just field -> processArgs rest opts{sortOpt = (field, Ascending)}
           Nothing -> Right $ "Invalid sort field after -s: " ++ sField
   processArgs ["-s"] _ = Right "Missing sort field after -s"
   processArgs ("-S" : sField : rest) opts
-    | snd (sort opts) /= None = Right "Sort option specified multiple times"
+    | snd (sortOpt opts) /= None = Right "Sort option specified multiple times"
     | otherwise =
         case parseSortField sField of
-          Just field -> processArgs rest opts{sort = (field, Descending)}
+          Just field -> processArgs rest opts{sortOpt = (field, Descending)}
           Nothing -> Right $ "Invalid sort field after -S: " ++ sField
   processArgs ["-S"] _ = Right "Missing sort field after -S"
   -- Files and Unknown options

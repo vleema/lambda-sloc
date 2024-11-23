@@ -16,15 +16,12 @@ instance Ord FileType where
   _ <= CPP _ = True
   _ <= _ = False
 
-printFilePath :: FileType -> String
-printFilePath = reverse . (++ ".../.") . reverse . getFilePath
-
 printFileType :: FileType -> String
 printFileType (Java _) = "Java"
 printFileType (C _) = "C"
 printFileType (CPP _) = "C++"
 printFileType (Rust _) = "Rust"
-printFileType (Header fileType) = printFilePath fileType ++ " Header"
+printFileType (Header fileType) = printFileType fileType ++ " Header"
 printFileType Regular = ""
 
 getFilePath :: FileType -> FilePath
