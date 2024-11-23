@@ -1,6 +1,6 @@
 # λsloc
 
-This program intends to count the lines of code of multiple programming languages, such as C/C++, Java, Kotlin, Rust, JavaScript, Haskell, Python. `sloc` receive as input one or more files or directories, having the option to act recursively in sub-directories.
+This program intends to count the lines of code of multiple programming languages, such as C/C++, Java, Rust. `sloc` receive as input one or more files or directories, having the option to act recursively in sub-directories.
 
 A sample output would be:
 
@@ -38,8 +38,4 @@ The program is written in Haskell, and was packaged by `cabal`. So you can run i
 ```terminal
 cabal run sloc -- <args>
 cabal install sloc
-```
-
-```
-
 ```
