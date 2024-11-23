@@ -47,7 +47,7 @@ getSourceCodeFiles recursively filePath = do
           else do
             files <- listDirectory filePath
             return $ map (filePath </>) files
-      return $ [sourceCodeFile file | file <- commonFiles, sourceCodeFile file /= Regular]
+      return $ [sourceCodeFile file_ | file_ <- commonFiles, sourceCodeFile file_ /= Regular]
     else case sourceCodeFile filePath of
       Regular -> return []
       _ -> return [sourceCodeFile filePath]
