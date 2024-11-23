@@ -52,7 +52,7 @@ formatRow colWidths cols aligns = concat $ interleave paddedCols spaces
  where
   pad width str alignLeft = if alignLeft then padStringLeft width str else padStringRight width str
   paddedCols = zipWith3 pad colWidths cols aligns
-  spaces = replicate (length cols - 1) " "
+  spaces = "   " : replicate (length cols - 1) " "
   interleave (x : xs) (y : ys) = x : y : interleave xs ys
   interleave [x] [] = [x]
   interleave [] _ = []
