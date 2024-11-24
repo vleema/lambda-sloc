@@ -1,6 +1,6 @@
 # λsloc
 
-This program intends to count the lines of code of multiple programming languages, such as C/C++, Java, Rust. `sloc` receive as input one or more files or directories, having the option to act recursively in sub-directories.
+This program intends to count the lines of code of multiple programming languages, such as C/C++, Java, Rust and Go. `sloc` receive as input one or more files or directories, having the option to act recursively in sub-directories.
 
 A sample output would be:
 
