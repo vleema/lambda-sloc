@@ -1,6 +1,6 @@
 module Sloc where
 
-import Data.Char (isSpace)
+import Data.Bifunctor (Bifunctor (second))
 
 data Token
   = CommentLine
@@ -24,23 +24,24 @@ tokenize fileContent = tokenize' (filter (not . null) $ lines fileContent) Norma
 
 tokenize' :: [String] -> ParserState -> [Token]
 tokenize' [] _ = []
-tokenize' (l : lss) state = processline l [] state ++ tokenize' lss state
+tokenize' (l : lss) state =
+  let (lastState, tokens) = processline (trim l) [] state
+   in tokens ++ tokenize' lss lastState
 
-processline :: String -> String -> ParserState -> [Token]
-processline [] acc Normal = [CodeLine | not $ null acc]
-processline [] _ InStringLiteral = [CodeLine]
-processline [] _ InMultiLineComment = [CommentLine]
+processline :: String -> String -> ParserState -> (ParserState, [Token])
+processline [] acc Normal = (Normal, [CodeLine | not $ null acc])
+processline [] _ InStringLiteral = (Normal, [CodeLine])
+processline [] _ InMultiLineComment = (InMultiLineComment, [CommentLine])
 processline (c : cs) _ InMultiLineComment
-  | not (null cs) && c == '*' && head cs == '/' = CommentLine : processline (tail cs) [] Normal
+  | not (null cs) && c == '*' && head cs == '/' = (Normal, CommentLine : snd (processline (tail cs) [] Normal))
   | otherwise = processline cs [] InMultiLineComment
 processline (c : cs) acc InStringLiteral
   | isStringLiteralEnd c acc || isNotEscapedSingleQuote acc = processline cs (c : acc) Normal
   | otherwise = processline cs (c : acc) InStringLiteral
 processline (c : cs) acc Normal
-  | all isSpace (c : cs) = [BlankLine]
   | isStringLiteralStart c acc = processline cs (c : acc) InStringLiteral
-  | not (null cs) && c == '/' && head cs == '/' = [CodeLine, CommentLine]
-  | not (null cs) && c == '/' && head cs == '*' = CodeLine : processline (tail cs) [] InMultiLineComment
+  | not (null cs) && c == '/' && head cs == '/' = (Normal, [CodeLine | not $ null acc] ++ [CommentLine])
+  | not (null cs) && c == '/' && head cs == '*' = second (CodeLine :) $ processline (tail cs) [] InMultiLineComment
   | otherwise = processline cs (c : acc) Normal
 
 isStringLiteralStart :: Char -> String -> Bool
@@ -54,3 +55,8 @@ countBackSlashes = length . takeWhile (== '\\')
 
 isStringLiteralEnd :: Char -> String -> Bool
 isStringLiteralEnd ch predChars = ch == '"' && even (countBackSlashes predChars)
+
+trim :: String -> String
+trim = f . f
+ where
+  f = reverse . dropWhile (`elem` " \t\n\v\f\r")
